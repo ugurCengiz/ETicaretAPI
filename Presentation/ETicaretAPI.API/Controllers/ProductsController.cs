@@ -13,35 +13,25 @@ namespace ETicaretAPI.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
 
         private readonly IOrderWriteRepository _orderWriteRepository;
+        private readonly IOrderReadRepository _orderReadRepository;
 
         private readonly ICustomerWriteRepository _customerWriteRepository;
+        private readonly ICustomerReadRepository _customerReadRepository;
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IOrderWriteRepository orderWriteRepository, ICustomerWriteRepository customerWriteRepository)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IOrderWriteRepository orderWriteRepository, ICustomerWriteRepository customerWriteRepository, ICustomerReadRepository customerReadRepository, IOrderReadRepository orderReadRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _orderWriteRepository = orderWriteRepository;
             _customerWriteRepository = customerWriteRepository;
+            _customerReadRepository = customerReadRepository;
+            _orderReadRepository = orderReadRepository;
         }
 
         [HttpGet]
-        public async Task GetTracking()
+        public IActionResult Get()
         {
-          Product product=  await _productReadRepository.GetByIdAsync("4a6e25ea-d9d5-42ae-ad90-51d49f20730c",false);
-          product.Name = "Mehmet";
-          _productWriteRepository.SaveAsync();
-
-            
-          //await _productWriteRepository.AddRangeAsync(new()
-          //{
-          //    new() { Id = Guid.NewGuid(), Name = "Product 7", Price = 100, CreatedDate = DateTime.UtcNow, Stock = 10 },
-          //    new() { Id = Guid.NewGuid(), Name = "Product 8", Price = 200, CreatedDate = DateTime.UtcNow, Stock = 20 },
-          //    new() { Id = Guid.NewGuid(), Name = "Product 9", Price = 300, CreatedDate = DateTime.UtcNow, Stock = 30 }
-          //});
-
-          //await _productWriteRepository.SaveAsync();
-
-
+            return Ok("Merhaba");
         }
 
         [HttpGet("{id}")]
@@ -63,3 +53,26 @@ namespace ETicaretAPI.API.Controllers
 
     }
 }
+
+
+
+
+//[HttpGet]
+//public async Task GetTracking()
+//{
+//  Product product=  await _productReadRepository.GetByIdAsync("4a6e25ea-d9d5-42ae-ad90-51d49f20730c",false);
+//  product.Name = "Mehmet";
+//  _productWriteRepository.SaveAsync();
+
+
+//  //await _productWriteRepository.AddRangeAsync(new()
+//  //{
+//  //    new() { Id = Guid.NewGuid(), Name = "Product 7", Price = 100, CreatedDate = DateTime.UtcNow, Stock = 10 },
+//  //    new() { Id = Guid.NewGuid(), Name = "Product 8", Price = 200, CreatedDate = DateTime.UtcNow, Stock = 20 },
+//  //    new() { Id = Guid.NewGuid(), Name = "Product 9", Price = 300, CreatedDate = DateTime.UtcNow, Stock = 30 }
+//  //});
+
+//  //await _productWriteRepository.SaveAsync();
+
+
+//}
