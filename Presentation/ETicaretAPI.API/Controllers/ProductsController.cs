@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Application.RequestParamaters;
 using ETicaretAPI.Application.ViewModels.Products;
 using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -13,18 +14,32 @@ namespace ETicaretAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
-        
+
         public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
-           
+
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] Pagination pagination)
         {
-            return Ok(_productReadRepository.GetAll(false));
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Skip(pagination.Page * pagination.Size).Take(pagination.Size).Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.Stock,
+                x.Price,
+                x.CreatedDate,
+                x.UpdatedDate
+            });
+            return Ok(new
+            {
+                totalCount,
+                products
+            });
         }
 
         [HttpGet("{id}")]
@@ -32,20 +47,20 @@ namespace ETicaretAPI.API.Controllers
         {
             return Ok(await _productReadRepository.GetByIdAsync(id, false));
         }
-        
+
 
         [HttpPost]
         public async Task<IActionResult> Post(VM_Create_Product model)
         {
-            
-          await  _productWriteRepository.AddAsync(new()
+
+            await _productWriteRepository.AddAsync(new()
             {
                 Name = model.Name,
                 Price = model.Price,
                 Stock = model.Stock
             });
-          await _productWriteRepository.SaveAsync();
-          return StatusCode((int)HttpStatusCode.Created);
+            await _productWriteRepository.SaveAsync();
+            return StatusCode((int)HttpStatusCode.Created);
         }
 
         [HttpPut]
@@ -66,7 +81,7 @@ namespace ETicaretAPI.API.Controllers
         {
             await _productWriteRepository.RemoveAsync(id);
             await _productWriteRepository.SaveAsync();
-            return Ok();
+            return Ok(200);
         }
 
 
